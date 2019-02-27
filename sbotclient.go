@@ -25,6 +25,8 @@ func check(err error) {
 	}
 }
 
+type SbotClient muxrpc.Endpoint
+
 const sbotURL = "localhost:8008"
 
 // @@@ move this to another package within the go.crytoscope codebase
@@ -84,7 +86,6 @@ func initClient(pathToKeyfile string) (client muxrpc.Endpoint, err error) {
 		check(pkr.Close())
 		os.Exit(0)
 	}()
-	// logging.SetCloseChan(signalc)
 	go func() {
 		err := client.(muxrpc.Server).Serve(longctx)
 		check(err)

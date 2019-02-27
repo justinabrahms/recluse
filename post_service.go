@@ -11,6 +11,17 @@ import (
 	"go.cryptoscope.co/ssb/message"
 )
 
+var client SbotClient
+
+func init() {
+	var err error
+	// @@@ This shouldn't be hardcoded
+	client, err = initClient("/home/justin/.ssb/secret")
+	if err != nil {
+		panic(errors.Wrap(err, "This may mean you don't have an sbot running?"))
+	}
+}
+
 type KeyValueRaw struct {
 	Key       *ssb.MessageRef       `json:"key"`
 	Value     message.LegacyMessage `json:"value"`
@@ -33,12 +44,6 @@ type PostsService struct{}
 
 func (h *PostsService) List(r *http.Request, args *PostsListArgs, reply *PostsListReply) error {
 	fmt.Println("List method")
-	client, err := initClient("/home/justin/.ssb/secret") // this should be moved somewhere else
-	if err != nil {
-		// @@@ handle sending error reply
-		fmt.Println(err)
-		return err
-	}
 
 	fmt.Println("fetching from sbot")
 	// the map thing tells the go client what the marshal format is.
