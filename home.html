@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Chat Example</title>
+    <script type="text/javascript">
+     window.onload = function () {
+       var conn;
+       var msg = document.getElementById("msg");
+       var log = document.getElementById("log");
+       var status = document.getElementById("status-message");
+
+       function updateStatus(message, type) {
+         status.innerHTML = `<p class="${type}">${message}</p>`;
+       }
+
+       function error(message) {
+         return updateStatus(message, "error");
+       }
+
+       function prependLog(item) {
+         var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
+         log.prepend(item);
+         if (doScroll) {
+           log.scrollTop = log.scrollHeight - log.clientHeight;
+         }
+       }
+
+       if (window["WebSocket"]) {
+         conn = new WebSocket("ws://" + document.location.host + "/ws");
+
+         conn.onclose = function (evt) {
+           error("<b>Connection closed.</b>");
+         };
+
+         conn.onmessage = function (evt) {
+           var messages = evt.data.split('\n');
+           console.log(data);
+           for (var i = 0; i < messages.length; i++) {
+             var data = JSON.parse(messages[i]);
+             console.log(data);
+             var item = document.createElement("li");
+             var id = parseInt(data.Id);
+             item.className = (parseInt(data.Id) % 2) === 0 ? "post post-even" : "post post-odd";
+             let extra = '';
+             if (data.Children) {
+               let children = '';
+               for (let child of data.Children) {
+                 children += `<li class="child-post"><p>${child.Body}</p><p class="author">${child.Author}</p></li>`
+               }
+               extra = `<ol class="post children">${children}</ol>`
+             }
+             
+             item.innerHTML = `<p>${data.Body}</p><p class="author">~${data.Author}</p>${extra}`
+             prependLog(item);
+           }
+         };
+       } else {
+         error("<b>Your browser does not support WebSockets.</b>");
+       }
+     };
+    </script>
+
+    <style type="text/css">
+     #status-message > .error{
+       padding: 10px;
+       text-align: center;
+       background-color: goldenrod;
+       color: black;
+     }
+     #log {
+       list-style-type: none; 
+     }
+
+     .post {
+       padding: 5px 15px;
+       width: 50em;
+     }
+
+     .post-even {
+       background-color: #ccc;
+     }
+
+     .post-odd {
+       background-color: #e7e7e7;
+     }
+
+     .children {
+       list-style-type: none;
+       background-color: #666;
+       width: 70%;
+       margin-left: 20%;
+     }
+
+     .author{
+       text-align: right;
+     }
+
+    </style>
+  </head>
+  
+  <body>
+    <div id="status-message"></div>
+    <h2>posts</h2>
+    <ol id="log">
+      <li class="post post-even">
+        <p>here is my body</p>
+        <p class="author">
+          ~Justin Abrahms
+        </p>
+        <ul class="post children">
+          <li class="child-post">
+            <p>this is a response</p>
+            <p class="author">
+              ~Someone Else
+            </p>
+          </li>
+        </ul>
+      </li>
+      
+    </ol>
+  </body>
+</html>
