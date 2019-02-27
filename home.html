@@ -25,6 +25,51 @@
          }
        }
 
+       function renderPost(data) {
+         var item = document.createElement("li");
+         var id = parseInt(data.Id);
+         item.className = (parseInt(data.Id) % 2) === 0 ? "post post-even" : "post post-odd";
+         let extra = '';
+         if (data.Children) {
+           let children = '';
+           for (let child of data.Children) {
+             children += `<li class="child-post"><p>${child.Body}</p><p class="author">${child.Author}</p></li>`
+           }
+           extra = `<ol class="post children">${children}</ol>`
+         }
+         
+         item.innerHTML = `<p>${data.Body}</p><p class="author">~${data.Author}</p>${extra}`
+         prependLog(item);
+       }
+
+       const url = "http://localhost:8080/rpc";
+       const data = {
+         method: 'posts.List',
+         params: [],
+         id: 0,
+       };
+
+       fetch(url, {
+         headers: {
+           "Content-Type": "application/json",
+           "Accept":"application/json"
+         },
+         method: 'POST',
+         body: JSON.stringify(data),
+       })
+         .then((resp) => resp.json())
+         .then(({ result }) => {
+           for (post of result.Posts) {
+             renderPost(post);
+           }
+         })
+         .catch((err) => {
+           console.log('err: ', err);
+         });
+       
+
+
+       
        if (window["WebSocket"]) {
          conn = new WebSocket("ws://" + document.location.host + "/ws");
 
@@ -37,21 +82,7 @@
            console.log(data);
            for (var i = 0; i < messages.length; i++) {
              var data = JSON.parse(messages[i]);
-             console.log(data);
-             var item = document.createElement("li");
-             var id = parseInt(data.Id);
-             item.className = (parseInt(data.Id) % 2) === 0 ? "post post-even" : "post post-odd";
-             let extra = '';
-             if (data.Children) {
-               let children = '';
-               for (let child of data.Children) {
-                 children += `<li class="child-post"><p>${child.Body}</p><p class="author">${child.Author}</p></li>`
-               }
-               extra = `<ol class="post children">${children}</ol>`
-             }
-             
-             item.innerHTML = `<p>${data.Body}</p><p class="author">~${data.Author}</p>${extra}`
-             prependLog(item);
+             renderPost(data);
            }
          };
        } else {
