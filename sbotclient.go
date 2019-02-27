@@ -25,6 +25,8 @@ func check(err error) {
 	}
 }
 
+const sbotURL = "localhost:8008"
+
 // @@@ move this to another package within the go.crytoscope codebase
 type noopHandler struct{}
 
@@ -38,9 +40,6 @@ func (h noopHandler) HandleCall(ctx context.Context, req *muxrpc.Request, edp mu
 }
 
 func initClient(pathToKeyfile string) (client muxrpc.Endpoint, err error) {
-	// NB: This is hardcoded b/c I deleted the "connect to a
-	// remote" section of the code.
-	const localhost = "localhost:8008"
 	sbotAppKey, err := base64.StdEncoding.DecodeString("1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s=")
 	if err != nil {
 		return nil, err
@@ -57,7 +56,7 @@ func initClient(pathToKeyfile string) (client muxrpc.Endpoint, err error) {
 	}
 
 	var remotPubKey = localKey.Pair.Public
-	plainAddr, err := net.ResolveTCPAddr("tcp", localhost)
+	plainAddr, err := net.ResolveTCPAddr("tcp", sbotURL)
 	if err != nil {
 		// @@@ remove / reword
 		return nil, errors.Wrapf(err, "init: base64 decode of --remoteKey failed")
