@@ -65,17 +65,8 @@ func initClient(pathToKeyfile string) (client muxrpc.Endpoint, err error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error dialing")
 	}
-	/* coming soon:
-	conn, err := net.Dial("unix", "/home/cryptix/.ssb/socket")
-	if err != nil {
-		return nil,  errors.Wrap(err, "error dialing unix sock")
-	}
-	*/
+
 	var rwc io.ReadWriteCloser = conn
-	// logs every muxrpc packet
-	// if ctx.Bool("verbose") {
-	// 	rwc = debug.Wrap(log, rwc)
-	// }
 	pkr := muxrpc.NewPacker(rwc)
 
 	h := noopHandler{}
