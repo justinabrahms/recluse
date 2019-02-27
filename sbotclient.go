@@ -58,8 +58,7 @@ func initClient(pathToKeyfile string) (client muxrpc.Endpoint, err error) {
 	var remotPubKey = localKey.Pair.Public
 	plainAddr, err := net.ResolveTCPAddr("tcp", sbotURL)
 	if err != nil {
-		// @@@ remove / reword
-		return nil, errors.Wrapf(err, "init: base64 decode of --remoteKey failed")
+		return nil, errors.Wrapf(err, "Unable to resolve sbotUrl")
 	}
 
 	conn, err := netwrap.Dial(plainAddr, c.ConnWrapper(remotPubKey))
