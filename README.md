@@ -14,7 +14,7 @@ Non-Goals:
 ## How to run it as a developer
 
 1. [Install go](https://golang.org/dl/)
-2. Check out this repository and `cd` in to it's directory
+2. Check out this repository (*NOTE*: the default branch is `mainline`) and `cd` in to it's directory
 3. `go get -v` which will download the packages onto your $GOPATH
 4. `go run *.go` will run the webservice
 5. (optional) from the `demo_website` directory, type `go run *.go` which will spawn a webserver with a tiny UI for playing purposes.
