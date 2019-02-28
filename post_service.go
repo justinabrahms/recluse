@@ -18,7 +18,11 @@ var client SbotClient
 
 func init() {
 	var err error
-	client, err = initClient(fmt.Sprintf("/home/%s/.ssb/secret", user.Current()))
+	username, err := user.Current()
+	if err != nil {
+		panic(errors.Wrap(err, "Not sure why you don't have a username. Maybe windows?"))
+	}
+	client, err = initClient(fmt.Sprintf("/home/%s/.ssb/secret", username))
 	if err != nil {
 		panic(errors.Wrap(err, "This may mean you don't have an sbot running?"))
 	}
