@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os/user"
 
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
@@ -15,8 +16,7 @@ var client SbotClient
 
 func init() {
 	var err error
-	// @@@ This shouldn't be hardcoded
-	client, err = initClient("/home/justin/.ssb/secret")
+	client, err = initClient(fmt.Sprintf("/home/%s/.ssb/secret", user.Current()))
 	if err != nil {
 		panic(errors.Wrap(err, "This may mean you don't have an sbot running?"))
 	}
