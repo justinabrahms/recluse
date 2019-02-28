@@ -14,10 +14,11 @@ Non-Goals:
 ## How to run it as a developer
 
 1. [Install go](https://golang.org/dl/)
-2. Check out this repository (*NOTE*: the default branch is `mainline`) and `cd` in to it's directory
-3. `go get -v` which will download the packages onto your $GOPATH
-4. `go run *.go` will run the webservice
-5. (optional) from the `demo_website` directory, type `go run *.go` which will spawn a webserver with a tiny UI for playing purposes.
+1. Check out this repository (*NOTE*: the default branch is `mainline`) and `cd` in to it's directory
+1. `go get -v` which will download the packages onto your $GOPATH
+1. Start an sbot somehow. I just run an instance of patchwork. I'm sure there are plugin things we need to figure out soon.
+1. `go run *.go` will run the webservice
+1. (optional) from the `demo_website` directory, type `go run *.go` which will spawn a webserver with a tiny UI for playing purposes.
 
 ## LICENSE
 
