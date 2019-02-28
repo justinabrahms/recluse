@@ -53,93 +53,65 @@ func (h *PostsService) List(r *http.Request, args *PostsListArgs, reply *PostsLi
 		count = args.Count
 	}
 
-	fmt.Println("fetching from sbot")
-	// the map thing tells the go client what the marshal format is.
 	// src, err := client.Source(r.Context(), KeyValueRaw{}, muxrpc.Method{"createLogStream"})
 	src, err := client.Source(r.Context(), KeyValueRaw{}, muxrpc.Method{"messagesByType"}, "post")
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	// we could call an API that's 'get post by type'
 
-	fmt.Println("iterating")
-	v, err := src.Next(r.Context())
-	if luigi.IsEOS(err) {
-		fmt.Println("eos")
-		return nil
-	} else if err != nil {
-		fmt.Println(err)
-		return errors.Wrapf(err, "createLogStream: failed to drain")
-	}
-	fmt.Printf("V: %#v\n\n", v)
-	msg := v.(KeyValueRaw)
+	posts := []Post{}
+	for len(posts) < count {
+		v, err := src.Next(r.Context())
+		if luigi.IsEOS(err) {
+			fmt.Println("eos")
+			break
+		} else if err != nil {
+			fmt.Println(err)
+			return errors.Wrapf(err, "createLogStream: failed to drain")
+		}
 
-	fmt.Printf("Message: %#v\n\n", msg)
-	fmt.Printf("Author: %s\n\n", msg.Value.Author)
-	fmt.Printf("User's Timestamp: %d\n\n", msg.Value.Timestamp)
-	// lol @ content hash
+		msg := v.(KeyValueRaw)
 
-	content, ok := msg.Value.Content.(map[string]interface{})
-	if !ok {
-		fmt.Println("error swapping to content hash")
-		return fmt.Errorf("couldn't swap it to a content hash: %T", msg.Value.Content)
-	}
+		fmt.Printf("Message: %#v\n\n", msg)
+		fmt.Printf("Author: %s\n\n", msg.Value.Author)
+		fmt.Printf("User's Timestamp: %d\n\n", msg.Value.Timestamp)
 
-	ctype, ok := content["type"]
-	if !ok {
-		fmt.Println("error type param")
-		return errors.New("Message didn't have a type param")
-	}
-	ctext, ok := content["text"]
-	if !ok {
-		fmt.Println("error text param")
-		return errors.New("Message didn't have text")
-	}
-	// croot, ok := content["root"]
-	// if !ok {
-	// 	return errors.New("Message didn't have a root param")
-	// }
+		content, ok := msg.Value.Content.(map[string]interface{})
+		if !ok {
+			fmt.Println("error swapping to content hash bc of type: %T", msg.Value.Content)
+			continue
+		}
 
-	switch ctype.(string) {
-	case "about":
-		fmt.Println("It's an about stanza")
-	case "post":
-		reply.Posts = []Post{
-			Post{
+		ctype, ok := content["type"]
+		if !ok {
+			fmt.Println("error type param")
+			return errors.New("Message didn't have a type param")
+		}
+		ctext, ok := content["text"]
+		if !ok {
+			fmt.Println("error text param")
+			return errors.New("Message didn't have text")
+		}
+		// croot, ok := content["root"]
+		// if !ok {
+		// 	return errors.New("Message didn't have a root param")
+		// }
+
+		switch ctype.(string) {
+		case "about":
+			fmt.Println("It's an about stanza")
+		case "post":
+			posts = append(posts, Post{
 				Id:     msg.Key.Ref(),
 				Author: msg.Value.Author,
 				Body:   ctext.(string),
-			},
+			})
+		default:
+			fmt.Println("Unknown")
 		}
-		// fmt.Println("It's an post stanza")
-	default:
-		fmt.Println("Unknown")
 	}
+	reply.Posts = posts
 
-	// reply.Posts = []Post{
-	// 	Post{
-	// 		Id:     "my-id",
-	// 		Author: "someone",
-	// 		Body:   "my body goes here",
-	// 	},
-	// 	Post{
-	// 		Id:     "anotherId",
-	// 		Author: "someone else",
-	// 		Body:   "body text",
-	// 		Children: &[]Post{
-	// 			Post{
-	// 				Id:     "first-child-id",
-	// 				Author: "that first person",
-	// 				Body:   "1st child",
-	// 			},
-	// 			Post{
-	// 				Id:     "second-child-id",
-	// 				Author: "that first person",
-	// 				Body:   "2nd child",
-	// 			},
-	// 		},
-	// 	},
-	// }
 	return nil
 }
