@@ -25,7 +25,7 @@ func init() {
 type KeyValueRaw struct {
 	Key       *ssb.MessageRef       `json:"key"`
 	Value     message.LegacyMessage `json:"value"`
-	Timestamp int64                 `json:"timestamp"`
+	Timestamp float64               `json:"timestamp"`
 }
 
 type Post struct {
