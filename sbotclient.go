@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"os"
 	"os/signal"
@@ -92,6 +91,5 @@ func initClient(pathToKeyfile string) (client muxrpc.Endpoint, err error) {
 		// if this returns, you can't return anything.
 		// Maybe this should cancel the context??
 	}()
-	log.Println("init", "done")
 	return client, nil
 }
