@@ -22,7 +22,7 @@ func init() {
 	if err != nil {
 		panic(errors.Wrap(err, "Not sure why you don't have a username. Maybe windows?"))
 	}
-	client, err = initClient(fmt.Sprintf("/home/%s/.ssb/secret", username))
+	client, err = initClient(fmt.Sprintf("/home/%s/.ssb/secret", username.Username))
 	if err != nil {
 		panic(errors.Wrap(err, "This may mean you don't have an sbot running?"))
 	}
