@@ -71,7 +71,7 @@
 
        
        if (window["WebSocket"]) {
-         conn = new WebSocket("ws://" + document.location.host + "/ws");
+         conn = new WebSocket("ws://" + document.location.hostname + ":8080/ws");
 
          conn.onclose = function (evt) {
            error("<b>Connection closed.</b>");
