@@ -25,7 +25,6 @@ func main() {
 	s.RegisterService(new(PostsService), "posts")
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", serveHome)
 	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
