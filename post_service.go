@@ -12,6 +12,8 @@ import (
 	"go.cryptoscope.co/ssb/message"
 )
 
+const MAX_POSTS_IN_REPLY = 20
+
 var client SbotClient
 
 func init() {
@@ -34,6 +36,7 @@ type Post struct {
 }
 
 type PostsListArgs struct {
+	Count int
 }
 
 type PostsListReply struct {
@@ -43,7 +46,12 @@ type PostsListReply struct {
 type PostsService struct{}
 
 func (h *PostsService) List(r *http.Request, args *PostsListArgs, reply *PostsListReply) error {
-	fmt.Println("List method")
+	var count int
+	if args.Count > MAX_POSTS_IN_REPLY || args.Count == 0 {
+		count = MAX_POSTS_IN_REPLY
+	} else {
+		count = args.Count
+	}
 
 	fmt.Println("fetching from sbot")
 	// the map thing tells the go client what the marshal format is.
