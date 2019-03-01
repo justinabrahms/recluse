@@ -92,10 +92,16 @@ func (h *PostsService) List(r *http.Request, args *PostsListArgs, reply *PostsLi
 			fmt.Println("error type param")
 			return errors.New("Message didn't have a type param")
 		}
+
 		ctext, ok := content["text"]
 		if !ok {
 			fmt.Println("error text param")
 			return errors.New("Message didn't have text")
+		}
+		cbody, ok := ctext.(string)
+		if !ok {
+			fmt.Printf("Found invalid body text type %T\n", ctext)
+			continue
 		}
 		// croot, ok := content["root"]
 		// if !ok {
@@ -109,7 +115,7 @@ func (h *PostsService) List(r *http.Request, args *PostsListArgs, reply *PostsLi
 			posts = append(posts, Post{
 				Id:     msg.Key.Ref(),
 				Author: msg.Value.Author,
-				Body:   ctext.(string),
+				Body:   cbody,
 			})
 		default:
 			fmt.Println("Unknown")
