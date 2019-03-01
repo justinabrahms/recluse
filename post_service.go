@@ -77,9 +77,8 @@ func (h *PostsService) List(r *http.Request, args *PostsListArgs, reply *PostsLi
 
 		msg := v.(KeyValueRaw)
 
-		fmt.Printf("Message: %#v\n\n", msg)
-		fmt.Printf("Author: %s\n\n", msg.Value.Author)
-		fmt.Printf("User's Timestamp: %d\n\n", msg.Value.Timestamp)
+		// If you want more information, run `sbot get %key`
+		fmt.Printf("Key: %s\n", msg.Key.Ref())
 
 		content, ok := msg.Value.Content.(map[string]interface{})
 		if !ok {
