@@ -14,6 +14,7 @@ import (
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
+var addWsCapability = flag.Bool("shouldWs", false, "if we should start the websocket responder")
 
 func main() {
 	flag.Parse()
@@ -29,9 +30,11 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
-	})
+	if *addWsCapability {
+		r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+			serveWs(hub, w, r)
+		})
+	}
 
 	r.Handle("/rpc", s).Methods("POST")
 
