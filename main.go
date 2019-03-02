@@ -34,6 +34,8 @@ func main() {
 		r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 			serveWs(hub, w, r)
 		})
+	} else {
+		fmt.Println("Starting without websocket support.")
 	}
 
 	r.Handle("/rpc", s).Methods("POST")
