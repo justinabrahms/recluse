@@ -13,6 +13,6 @@ For later:
 
 --
 
-1. [done] send cryptix a list of problems w/ onboarding
-2. figure out how to get author name (get post by type for 'about')
-3. figure out threadding
+1. figure out how to get author name (get post by type for 'about')
+1. figure out threadding
+1. Get most recent posts (by claimed date), not the least recent posts
